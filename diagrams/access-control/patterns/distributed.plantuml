@@ -1,0 +1,36 @@
+@startuml
+
+actor User
+participant IdAM
+participant Service
+database "Service Data"
+database "Access Control Data"
+
+User -> IdAM: Authentication Request
+note left: Elides Sign-In Process
+IdAM --> User: Authentication Credentials
+
+... Later ...
+
+User -> Service: Request with Credentials
+Service -> "Service Data": Context Query
+"Service Data" -> Service: Context Result
+Service -> "Access Control Data": Permission Query
+note right: Using Relevant Context Data
+hnote over "Service", "Access Control Data": Access Control Logic
+"Access Control Data" -> Service: Permission Result
+
+alt Sufficient Permission
+
+... Processing etc. ...
+
+Service -> User: Response
+
+else Insufficient Permission
+
+Service -> User: Rejection
+note right: May Trigger Uplift
+
+end
+
+@enduml

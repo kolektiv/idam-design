@@ -1,0 +1,35 @@
+@startuml
+
+actor User
+participant IdAM
+participant Gateway
+participant Service
+database "Access Control"
+
+User -> IdAM: Authentication Request
+note left: Elides Sign-In Process
+IdAM --> User: Authentication Credentials
+
+... Later ...
+
+User -> Gateway: Request with Credentials
+Gateway -> "Access Control": Permission Query
+"Access Control" -> Gateway: Permission Result
+
+alt Sufficient Credentials
+
+Gateway -> Service: Proxied Request
+note right: Credentials Included
+
+... Processing, etc. ...
+
+Service -> User: Response
+
+else Insufficient Credentials
+
+Gateway -> User: Rejection
+note right: May Trigger Uplift
+
+end
+
+@enduml
