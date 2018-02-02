@@ -1,5 +1,7 @@
 @startuml
 
+!include ../../style.plantuml
+
 actor User
 participant IdAM
 participant Gateway

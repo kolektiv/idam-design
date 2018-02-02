@@ -1,0 +1,33 @@
+@startuml
+
+skinparam backgroundColor #fafafa
+
+skinparam sequence {
+  actorBorderThickness 1
+
+  box {
+    backgroundColor #ff0000
+    borderColor #00ff00
+  }
+
+  group {
+    backgroundColor #cccccc
+    bodyBackgroundColor #dddddd
+    borderColor #333333
+    borderThickness 1
+    shadowing false
+  }
+
+  divider {
+    backgroundColor #ff0000
+  }
+
+  participant {
+    backgroundColor #cccccc
+    borderColor #333333
+    borderThickness 1
+    shadowing false
+  }
+}
+
+@enduml
