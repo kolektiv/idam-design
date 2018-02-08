@@ -1,0 +1,62 @@
+@startuml
+
+!include ../style.plantuml
+
+actor "User A" as A
+actor "User B" as B
+participant Service
+participant Continuation
+participant IdAM
+
+A -> Service: Continuation Triggering Request
+activate Service
+note over A: User A Authenticated Previously
+Service -> Continuation: Continuation Data
+activate Continuation
+Continuation -> Service: Token
+deactivate Continuation
+A -> Service: Further Activity...
+deactivate Service
+
+... Later ...
+
+Service --> B: Async Communication inc. Token
+
+... Still Later ...
+
+B -> Service: Token
+activate Service
+Service -> Continuation: Validate Token
+activate Continuation
+
+alt Valid Token
+
+Continuation -> Service: Token Valid
+deactivate Continuation
+Service -> B: Redirect to IdAM with Token
+B -> IdAM: Login/Register
+activate IdAM
+note left: Login/Registration Process Elided
+IdAM -> B: Redirect to Service with Identity/Auth and Token
+deactivate IdAM
+B -> Service: Continue
+activate Service
+Service -> Continuation: Retrieve Continuation Data
+activate Continuation
+Continuation -> Service: Continuation Data
+note over Service: Use Data and Identity/Auth
+Service -> Continuation: Expire Token
+Continuation -> Service: Confirm
+deactivate Continuation
+Service -> B: Welcome
+deactivate Service
+
+else Invalid Token
+
+Service -> B: Sorry
+
+end
+
+deactivate Service
+
+@enduml
