@@ -1,0 +1,52 @@
+@startuml
+
+!include ../style.plantuml
+
+participant "Citizen\nResource Owner" as C #DDDDDD
+participant "Service Web\nClient" as SW #66CCFF
+participant "Service API\nResource Server" as SA #66CCFF
+participant "IdAM Web\nAuth Server" as IW #99FF99
+participant "IdAM API\n-" as IA #99FF99
+
+== Authentication ==
+activate C
+C -> SW: Request
+activate SW
+note over SW: Authentication/Authorization Required
+SW -> C: Response with 302 Redirect (to URI of IdAM Web)
+deactivate SW
+C -> IW: Request for Authentication Interface
+activate IW
+IW -> C: Authentication Interface Response
+deactivate IW
+C -> IW: POST of Email/Password (Credentials)
+activate IW
+... Interaction between IdAM Web and API Elided ...
+alt Invalid Credentials
+IW -> C: Error Response (Retry or Lockout)
+else Valid Credentials
+IW -> C: Success Response with 302 Redirect (to URI of Service Web with OAuth Code)
+deactivate IW
+C -> SW: Request with OAuth Code
+activate SW
+SW --> IA: Token Request with OAuth Code
+activate IA
+note over IA: Validate OAuth Code
+IA --> SW: Response with Tokens (Id, Auth, Refresh)
+deactivate IA
+SW -> C: Response with Tokens (Id, Auth, Refresh) as Cookies
+deactivate SW
+end
+== Usage ==
+C -> SW: Request with Tokens (Id, Auth, Refresh) as Cookies
+activate SW
+SW --> SA: API Request with Token Data (Id, Auth)
+activate SA
+note over SA: Access Management based on Id, Auth Data
+SA --> SW: API Response
+deactivate SA
+SW -> C: Response
+deactivate SW
+deactivate C
+
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+
+!include ../style.plantuml
+
+actor User
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock IM" as IM #CFFB8C
+participant "ForgeRock Connector" as Connector #FFD479
+participant "Citizen CRM" as CRM #C0C0C0
+
+Service -> IdAM: Identity Creation Request
+activate IdAM
+IdAM -> IM: User Object Creation Request
+IM -> IdAM: User Object Creation Response
+IdAM -> Service: Identity Creation Response
+deactivate IdAM
+...Asynchronous...
+IM -> Connector: Synchronisation
+Connector -> CRM: Creation/Modification
+...Later...
+Service -> IdAM: Identity Uplift Request
+activate IdAM
+IdAM -> IM: User Object Modification Request
+IM -> IdAM: User Object Modification Response
+Idam -> Service: Identity Uplift Response
+deactivate IdAM
+== Account Verification Flow ==
+...Verification...
+IdAM --> User: Account Verification Email
+note over User, IdAM: User Registration/Confirmation process elided
+
+@enduml

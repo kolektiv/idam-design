@@ -19,7 +19,8 @@ skinparam sequence {
   }
 
   divider {
-    backgroundColor #ff0000
+    backgroundColor #eeeeee
+    borderThickness 1
   }
 
   participant {

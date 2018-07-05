@@ -1,0 +1,31 @@
+@startuml
+
+!include ../style.plantuml
+
+actor User
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock AM" as AM #76D6FF
+participant "ForgeRock IM" as IM #CFFB8C
+
+User -> Service: Data Retrieval Request
+activate Service
+Service -> IdAM: Data Retrieval Permission Request
+note over Service: Request contains contextual data - URI, Identity, etc.
+activate IdAM
+IdAM -> AM: Policy Execution Request
+AM -> IM: IM Object Quer(y|ies) Request
+IM -> AM: IM Object Quer(y|ies) Response
+note over AM: Execution of standard policy
+AM -> IdAM: Policy Execution Response
+IdAM -> Service: Data Retrieval Permission Request
+deactivate IdAM
+note over Service: Service responsible for enforcement, acting on execution response
+alt
+Service -> User: Allowed Data Response
+else
+Service -> User: Denied Data Response
+end
+deactivate Service
+
+@enduml

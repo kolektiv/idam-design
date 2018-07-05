@@ -1,0 +1,15 @@
+@startuml
+
+!include ../style.plantuml
+
+actor User
+participant "IdAM API" as IdAM
+participant "ForgeRock IM" as IM #CFFB8C
+participant "ForgeRock Connector" as Connector #FFD479
+participant "Citizen CRM" as CRM #C0C0C0
+
+User -> CRM: Modify Identity
+...Asynchronous...
+Connector -> IM: Synchronisation
+
+@enduml

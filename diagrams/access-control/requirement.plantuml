@@ -1,0 +1,58 @@
+@startuml
+
+!include ../style.plantuml
+
+actor User as "User A"
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock AM" as AM #76D6FF
+participant "ForgeRock IM" as IM #CFFB8C
+
+== Requirement Registration ==
+
+Service -> IdAM: Record Requirement Request
+activate IdAM
+IdAM -> IM: Create Requirement Object Request
+note over IM: Store Action, Group, etc.
+IM -> IdAM: Create Requirement Object Response
+IdAM -> Service: Record Requirement Response
+deactivate IdAM
+
+... Later ...
+
+== User Membership Registration ==
+
+Service -> IdAM: Record Membership Request
+activate IdAM
+IdAM -> IM: Create Membership Request
+note over IM: Store Identity, Group, etc.
+IM -> IdAM: Create Membership Response
+IdAM -> Service: Record Membership Response
+deactivate IdAM
+
+... Later ...
+
+== Resource Usage ==
+
+User -> Service: Data Usage Request
+activate Service
+Service -> IdAM: Access Control Request
+note over Service, IdAM: Access Control Request contains Identity, Resource and Action data
+activate IdAM
+IdAM -> AM: Policy Request
+activate AM
+AM -> IM: Object Retrieval Request(s)
+IM -> AM: Object Retrieval Response(s)
+activate AM
+note over AM: Policy Evaluates Objects including registered Requirement
+note over AM: User is a member of Required Group
+AM -> AM: Policy Evaluation
+deactivate AM
+AM -> IdAM: Policy Response
+deactivate AM
+IdAM -> Service: Access Control Response
+deactivate IdAM
+Service -> Service: Access Control Enforcement
+Service -> User: Data Usage Response
+
+@enduml

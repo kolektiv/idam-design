@@ -1,0 +1,50 @@
+@startuml
+
+!include ../style.plantuml
+
+actor User as "User A"
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock AM" as AM #76D6FF
+participant "ForgeRock IM" as IM #CFFB8C
+
+== Resource Ownership Registration ==
+
+User -> Service: Data Creating Request
+activate Service
+note over Service: Store Data, etc.
+Service -> IdAM: Record Ownership Request
+activate IdAM
+IdAM -> IM: Create Ownership Object Request
+note over IM: Store Identity, URI, etc.
+IM -> IdAM: Create Ownership Object Response
+IdAM -> Service: Record Ownership Response
+deactivate IdAM
+Service -> User: Data Creating Response
+deactivate Service
+
+... Later ...
+
+== Resource Usage ==
+
+User -> Service: Data Usage Request
+activate Service
+Service -> IdAM: Access Control Request
+note over Service, IdAM: Access Control Request contains Identity, Resource and Action data
+activate IdAM
+IdAM -> AM: Policy Request
+activate AM
+AM -> IM: Object Retrieval Request(s)
+IM -> AM: Object Retrieval Response(s)
+activate AM
+note over AM: Policy Evaluates Objects including registered Ownership
+AM -> AM: Policy Evaluation
+deactivate AM
+AM -> IdAM: Policy Response
+deactivate AM
+IdAM -> Service: Access Control Response
+deactivate IdAM
+Service -> Service: Access Control Enforcement
+Service -> User: Data Usage Response
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+
+!include ../style.plantuml
+
+actor J as "John"
+actor S as "Saif"
+
+participant Divorce #0066FF
+participant IdAM #66FF66
+
+... Registration/Creation ...
+
+J -> Divorce: Start Petition
+Divorce -> J: Redirect to IdAM for Registration
+J -> IdAM: Self Register
+IdAM -> J: Redirect to Divorce for Petition
+J -> Divorce: Petition Created
+Divorce -> IdAM: Assign Grants
+note over IdAM: Assign Resource Grant to John, along with internal groups grants
+
+... Divorce Contested ...
+
+J --> S: Representation Request
+S --> J: Representation Agreement
+J -> Divorce: Saif is representing me
+Divorce -> IdAM: Assign Grants
+note over IdAM: Assign Resource/Action Grants to Saif
+
+... John Views Case ...
+
+J -> Divorce: View Case
+Divorce -> IdAM: Evaluate read-case for John
+note over Divorce, IdAM: read-case succeeds because of Resource Grant
+
+... Saif Updates Case ...
+S -> Divorce: Update Case
+Divorce -> IdAM: Evaluate read-case for Saif
+note over Divorce, IdAM: read-case succeeds because of Resource/Action Grant
+
+@enduml

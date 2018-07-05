@@ -1,0 +1,42 @@
+@startuml
+
+!include ../style.plantuml
+
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock IM" as IM #CFFB8C
+participant "ForgeRock Connector" as Connector #FFD479
+participant "Citizen CRM" as CRM #C0C0C0
+
+== Identity Query ==
+
+Service -> IdAM: Identity Query Request
+activate IdAM
+IdAM -> IM: User Object Query Request
+
+group Data Retrieval
+
+IM -> Connector: Identity Query
+Connector -> CRM: Identity Query
+CRM -> Connector: Identity Response
+Connector -> IM: Identity Response
+
+else
+
+...Asynchronous...
+
+CRM -> Connector: Identity Synchronisation
+Connector -> IM: Identity Synchronisation
+
+end
+
+IM -> IdAM: User Object Query Response
+IdAM -> Service: Identity Query Response
+deactivate IdAM
+
+== CRM Query ==
+
+Service -> CRM: CRM Query Request
+CRM -> Service: CRM Query Response
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+
+!include ../style.plantuml
+
+participant "Service" as Service #FFFFFF
+participant "IdAM API" as IdAM
+participant "ForgeRock IM" as IM #CFFB8C
+participant "ForgeRock Connector" as Connector #FFD479
+participant "Citizen CRM" as CRM #C0C0C0
+
+Service -> IdAM: Identity Creation Request
+activate IdAM
+IdAM -> IM: User Object Creation Request
+IM -> IdAM: User Object Creation Response
+IdAM -> Service: Identity Creation Response
+deactivate IdAM
+...Asynchronous...
+IM -> Connector: Synchronisation
+Connector -> CRM: Creation/Modification
+
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+
+!include ../style.plantuml
+
+actor A as "Admin"
+actor J as "Albert"
+actor L as "Doris"
+actor H as "Doris' Boss"
+actor JJ as "Reshma"
+
+participant CTSC #FFFFFF
+participant Service #0066FF
+participant JUI #00FFCC
+participant IdAM #66FF66
+
+== Group Creation ==
+
+A -> IdAM: Create Groups
+note over IdAM: Groups - Judiciary, Case Worker Low, Case Worker High
+
+== Group Assignment ==
+
+A -> IdAM: Assign Groups
+note over IdAM: Doris in Case Worker Low
+note over IdAM: Doris\' Boss in Case Worker High
+note over IdAM: Reshma in Judiciary
+
+== Group Grants ==
+
+A -> IdAM: Create Grants for Groups
+note over IdAM: Action Grant of read-case to Case Worker [High|Low], Judiciary
+note over IdAM: Action Grant of write-case to Case Worker High, Judiciary
+
+== Interaction ==
+
+J -> CTSC: Citizen Contact
+CTSC -> L: Activity
+CTSC -> IdAM: Evaluate read-case for Doris
+note over CTSC, IdAM: Success because of membership of Case Worker Low
+L -> J: Check Email
+
+... Later ...
+
+J -> Service: Upload Document
+Service -> IdAM: Create Resource Grant for Document for Albert
+
+... Case Worker Review ...
+
+H -> Service: Review Case
+Service -> IdAM: Evaluate read-case for Doris' Boss
+note over Service, IdAM: Success because of membership of Case Worker High
+H -> Service: Refer for Judicial Review
+Service -> IdAM: Evaluate write-case for Doris' Boss
+note over Service, IdAM: Success because of membership of Case Worker High
+
+... Judicial Review ...
+
+JJ -> JUI: Review Case
+JUI -> IdAM: Evaluate read-case for Reshma
+note over JUI, IdAM: Success because of membership of Judiciary
+JJ -> JUI: Provide Directions
+JUI -> IdAM: Evaluate write-case for Reshma
+note over JUI, IdAM: Success because of membership of Judiciary
+
+@enduml
